@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Homework06</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Video Edge Detection with Canvas</h1>
+    <div>Trịnh Đức Thiên - 20127330</div>
+
+    <div class="container">
+      <div class="media-box">
+        <h2>Video</h2>
+        <video id="video" width="400" height="300" controls>
+          <source src="./vid.mp4" type="video/mp4" />
+        </video>
+      </div>
+
+      <div class="media-box">
+        <h2>Edge Detection</h2>
+        <canvas id="canvas" width="400" height="300"></canvas>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="playBtn">Play</button>
+      <button id="pauseBtn">Pause</button>
+      <label for="edgeThreshold">Edge Threshold:</label>
+      <input type="range" id="edgeThreshold" min="1" max="100" value="30" />
+    </div>
+
+    <script src="/js/edgeDetector.js"></script>
+    <script src="/js/videoController.js"></script>
+    <script src="/js/app.js"></script>
+  </body>
+</html>
