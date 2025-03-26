@@ -1,2 +1,4 @@
 # Edge Detection
- Homework05 Computer Gracphics in HCMUS 
+
+Homework06 Computer Gracphics in HCMUS
+![Result](image.png)
