@@ -8,14 +8,12 @@
   </head>
   <body>
     <h1>Video Edge Detection with Canvas</h1>
-    <div>Trịnh Đức Thiên - 20127330</div>
-
+    <h2>20127330 - Trịnh Đức Thiên</h2>
     <div class="container">
       <div class="media-box">
         <h2>Video</h2>
         <video id="video" width="400" height="300" controls>
-          <source src="./vid.mp4" type="video/mp4" />
-          <source src="/vid.mp4" type="video/mp4" />
+          <source src="vid.mp4" />
         </video>
       </div>
 
@@ -32,8 +30,127 @@
       <input type="range" id="edgeThreshold" min="1" max="100" value="30" />
     </div>
 
-    <script src="/js/edgeDetector.js"></script>
-    <script src="/js/videoController.js"></script>
-    <script src="/js/app.js"></script>
+    <script>
+      // Lấy các phần tử DOM
+      const video = document.getElementById("video");
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+      const playBtn = document.getElementById("playBtn");
+      const pauseBtn = document.getElementById("pauseBtn");
+      const edgeThreshold = document.getElementById("edgeThreshold");
+
+      // Biến để kiểm soát animation frame
+      let animationId = null;
+
+      // Xử lý sự kiện nút play
+      playBtn.addEventListener("click", () => {
+        video.play();
+        startEdgeDetection();
+      });
+
+      // Xử lý sự kiện nút pause
+      pauseBtn.addEventListener("click", () => {
+        video.pause();
+        cancelAnimationFrame(animationId);
+      });
+
+      // Hàm phát hiện biên cạnh Sobel
+      function detectEdges(imageData) {
+        const width = canvas.width;
+        const height = canvas.height;
+        const data = imageData.data;
+        const threshold = parseInt(edgeThreshold.value);
+
+        // Tạo buffer để lưu ảnh xám
+        const grayBuffer = new Uint8Array(width * height);
+
+        // Chuyển ảnh sang grayscale
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          grayBuffer[i / 4] = 0.299 * r + 0.587 * g + 0.114 * b;
+        }
+
+        // Áp dụng toán tử Sobel
+        const output = new ImageData(width, height);
+
+        for (let y = 1; y < height - 1; y++) {
+          for (let x = 1; x < width - 1; x++) {
+            const i = y * width + x;
+
+            // Tính gradient theo hướng x và y
+            const gx =
+              -grayBuffer[i - width - 1] -
+              2 * grayBuffer[i - 1] -
+              grayBuffer[i + width - 1] +
+              grayBuffer[i - width + 1] +
+              2 * grayBuffer[i + 1] +
+              grayBuffer[i + width + 1];
+
+            const gy =
+              -grayBuffer[i - width - 1] -
+              2 * grayBuffer[i - width] -
+              grayBuffer[i - width + 1] +
+              grayBuffer[i + width - 1] +
+              2 * grayBuffer[i + width] +
+              grayBuffer[i + width + 1];
+
+            // Tính độ lớn gradient
+            const magnitude = Math.sqrt(gx * gx + gy * gy);
+            const edgeValue = magnitude > threshold ? 255 : 0;
+
+            // Gán giá trị cho output
+            const outputIndex = (y * width + x) * 4;
+            output.data[outputIndex] = edgeValue;
+            output.data[outputIndex + 1] = edgeValue;
+            output.data[outputIndex + 2] = edgeValue;
+            output.data[outputIndex + 3] = 255; // Alpha
+          }
+        }
+
+        return output;
+      }
+
+      // Hàm xử lý từng frame
+      function processFrame() {
+        if (video.paused || video.ended) return;
+
+        // Vẽ frame video lên canvas
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Lấy dữ liệu hình ảnh từ canvas
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        // Áp dụng phát hiện biên cạnh
+        const edgeData = detectEdges(imageData);
+
+        // Vẽ kết quả lên canvas
+        ctx.putImageData(edgeData, 0, 0);
+
+        // Lặp lại với frame tiếp theo
+        animationId = requestAnimationFrame(processFrame);
+      }
+
+      // Bắt đầu phát hiện biên cạnh
+      function startEdgeDetection() {
+        cancelAnimationFrame(animationId);
+        animationId = requestAnimationFrame(processFrame);
+      }
+
+      // Xử lý khi thay đổi ngưỡng
+      edgeThreshold.addEventListener("input", () => {
+        if (!video.paused) {
+          startEdgeDetection();
+        }
+      });
+
+      // Tự động bắt đầu khi video play
+      video.addEventListener("play", startEdgeDetection);
+
+      // Dừng khi video pause hoặc kết thúc
+      video.addEventListener("pause", () => cancelAnimationFrame(animationId));
+      video.addEventListener("ended", () => cancelAnimationFrame(animationId));
+    </script>
   </body>
 </html>
