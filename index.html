@@ -5,64 +5,190 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Homework06</title>
     <style>
+      :root {
+        --primary-color: #4a6fa5;
+        --secondary-color: #166088;
+        --accent-color: #4fc3f7;
+        --text-color: #333;
+        --light-bg: #f8f9fa;
+        --card-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
       body {
-        font-family: Arial, sans-serif;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         display: flex;
         flex-direction: column;
         align-items: center;
         padding: 20px;
-        background-color: #f5f5f5;
+        background-color: var(--light-bg);
+        color: var(--text-color);
+        line-height: 1.6;
       }
+
       h1 {
-        color: #333;
-        margin-bottom: 20px;
+        color: var(--secondary-color);
+        margin-bottom: 10px;
+        font-size: 2.2rem;
+        text-align: center;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
       }
+
+      h2 {
+        color: var(--primary-color);
+        margin: 15px 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+
       .container {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        gap: 20px;
-        margin-bottom: 20px;
+        gap: 30px;
+        margin: 30px 0;
+        max-width: 1200px;
       }
+
       .media-box {
         display: flex;
         flex-direction: column;
         align-items: center;
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: var(--card-shadow);
+        transition: transform 0.3s ease;
+        width: 100%;
+        max-width: 450px;
       }
+
+      .media-box:hover {
+        transform: translateY(-5px);
+      }
+
       video,
       canvas {
-        border: 2px solid #333;
+        border-radius: 8px;
         max-width: 100%;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--card-shadow);
+        background: #000;
       }
+
       .controls {
-        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        margin-top: 20px;
+        padding: 15px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: var(--card-shadow);
+        width: 100%;
+        max-width: 900px;
       }
+
       button {
-        padding: 8px 16px;
-        background-color: #4caf50;
+        padding: 10px 20px;
+        background-color: var(--secondary-color);
         color: white;
         border: none;
-        border-radius: 4px;
+        border-radius: 6px;
         cursor: pointer;
-        margin: 0 5px;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
+
       button:hover {
-        background-color: #45a049;
+        background-color: var(--primary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
       }
+
+      button:active {
+        transform: translateY(0);
+      }
+
       label {
+        font-weight: 500;
+        color: var(--primary-color);
         margin-right: 10px;
+      }
+
+      input[type="range"] {
+        width: 200px;
+        height: 8px;
+        -webkit-appearance: none;
+        background: #e0e0e0;
+        border-radius: 5px;
+        outline: none;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        background: var(--accent-color);
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      input[type="range"]::-webkit-slider-thumb:hover {
+        transform: scale(1.1);
+        background: var(--secondary-color);
+      }
+
+      .author {
+        font-size: 1.1rem;
+        color: var(--primary-color);
+        margin-bottom: 20px;
+        font-weight: 500;
+        padding: 8px 20px;
+        background: rgba(74, 111, 165, 0.1);
+        border-radius: 20px;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          flex-direction: column;
+          gap: 20px;
+        }
+
+        .controls {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        h1 {
+          font-size: 1.8rem;
+        }
+
+        h2 {
+          font-size: 1.3rem;
+        }
       }
     </style>
   </head>
   <body>
     <h1>Video Edge Detection with Canvas</h1>
-    <h2>20127330 - Trịnh Đức Thiên</h2>
+    <div class="author">20127330 - Trịnh Đức Thiên</div>
+
     <div class="container">
       <div class="media-box">
         <h2>Video</h2>
-        <video id="video" width="400" height="300" controls>
-          <source src="vid.mp4" />
+        <video
+          id="video"
+          width="400"
+          height="300"
+          controls
+          crossorigin="anonymous"
+        >
+          <source src="vid.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
         </video>
       </div>
 
@@ -75,8 +201,10 @@
     <div class="controls">
       <button id="playBtn">Play</button>
       <button id="pauseBtn">Pause</button>
-      <label for="edgeThreshold">Edge Threshold:</label>
-      <input type="range" id="edgeThreshold" min="1" max="100" value="30" />
+      <div>
+        <label for="edgeThreshold">Edge Threshold:</label>
+        <input type="range" id="edgeThreshold" min="1" max="100" value="30" />
+      </div>
     </div>
 
     <script>
@@ -93,7 +221,7 @@
 
       // Xử lý sự kiện nút play
       playBtn.addEventListener("click", () => {
-        video.play();
+        video.play().catch((e) => console.error("Play error:", e));
         startEdgeDetection();
       });
 
@@ -165,20 +293,25 @@
       function processFrame() {
         if (video.paused || video.ended) return;
 
-        // Vẽ frame video lên canvas
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        try {
+          // Vẽ frame video lên canvas
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        // Lấy dữ liệu hình ảnh từ canvas
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          // Lấy dữ liệu hình ảnh từ canvas
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-        // Áp dụng phát hiện biên cạnh
-        const edgeData = detectEdges(imageData);
+          // Áp dụng phát hiện biên cạnh
+          const edgeData = detectEdges(imageData);
 
-        // Vẽ kết quả lên canvas
-        ctx.putImageData(edgeData, 0, 0);
+          // Vẽ kết quả lên canvas
+          ctx.putImageData(edgeData, 0, 0);
 
-        // Lặp lại với frame tiếp theo
-        animationId = requestAnimationFrame(processFrame);
+          // Lặp lại với frame tiếp theo
+          animationId = requestAnimationFrame(processFrame);
+        } catch (e) {
+          console.error("Error processing frame:", e);
+          cancelAnimationFrame(animationId);
+        }
       }
 
       // Bắt đầu phát hiện biên cạnh
@@ -200,6 +333,14 @@
       // Dừng khi video pause hoặc kết thúc
       video.addEventListener("pause", () => cancelAnimationFrame(animationId));
       video.addEventListener("ended", () => cancelAnimationFrame(animationId));
+
+      // Thêm xử lý lỗi video
+      video.addEventListener("error", () => {
+        console.error("Video loading error");
+        alert(
+          "Error loading video. Please check if the video file exists and is accessible."
+        );
+      });
     </script>
   </body>
 </html>
